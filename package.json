@@ -1,0 +1,22 @@
+{
+  "name": "postman-newman-dashboard",
+  "version": "1.0.0",
+  "description": "A dashboard for running and managing Postman Newman API tests.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.mjs",
+    "run-newman": "node run-newman.js"
+  },
+  "keywords": ["postman", "newman", "dashboard", "api-testing"],
+  "author": "Reid",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "newman": "^6.2.0",
+    "newman-reporter-htmlextra": "^1.23.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "open": "^10.1.1"
+  }
+}
