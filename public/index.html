@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>SKsoft Dashboard</title>
+ 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+  
+    table th, table td {
+      padding: 8px;
+      text-align: center;
+    }
+  
+    table th {
+      background-color: #f4f4f4;
+    }
+  
+    table td a {
+      text-decoration: none;
+      color: blue;
+    }
+  
+    button {
+      margin-bottom: 15px;
+      padding: 8px 16px;
+      font-size: 16px;
+    }
+  
+    h2 {
+      margin-top: 30px;
+    }
+
+    .spinner {
+      display: none;
+      margin-left: 10px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+  
+<body>
+  <h1>🧪 SKsoft API Dashboard</h1>
+
+  <button onclick="runTests()" aria-label="Run API Tests">▶️ Run API Tests</button>
+  <span class="spinner" id="testSpinner"></span>
+  <p id="statusBox">Ready to test...</p>
+
+  <h2>📜 Report History Dropdown</h2>
+  <select id="reportDropdown" onchange="openSelectedReport(this.value)" aria-label="Select a report">
+    <option value="">-- Select a report --</option>
+  </select>
+
+  <!-- <h2>📈 Run Summary COMING SOON!!!</h2>
+  <label for="dateFilter">Filter by date:</label>
+  <select id="dateFilter" onchange="filterByDate()" aria-label="Filter by date">
+    <option value="">All Dates</option>
+  </select>
+
+  <table border="1" id="summaryTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Passed</th>
+        <th>Failed</th>
+        <th>Total</th>
+        <th>View Report</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>  -->
+
+  <script>
+    async function runTests() {
+      const spinner = document.getElementById('testSpinner');
+      const statusBox = document.getElementById('statusBox');
+      spinner.style.display = 'inline-block';
+      statusBox.textContent = '⏳ Running tests...';
+
+      try {
+        const res = await fetch('/run-tests', { method: 'POST' });
+        const data = await res.json();
+        if (data.reportUrl) {
+          statusBox.innerHTML = `✅ Test complete! <a href="${data.reportUrl}" target="_blank">📊 View Full Report</a>`;
+          loadReportDropdown();
+          loadRunSummary();
+        } else {
+          statusBox.textContent = '❌ Error: ' + data.error;
+          console.error('Test run error:', data.error);
+        }
+      } catch (err) {
+        statusBox.textContent = '❌ Test run failed.';
+        console.error('Test run failed:', err);
+      } finally {
+        spinner.style.display = 'none';
+      }
+    }
+
+    async function loadReportDropdown() {
+      try {
+        const res = await fetch('/get-reports');
+        const reports = await res.json();
+        const dropdown = document.getElementById('reportDropdown');
+        dropdown.innerHTML = '<option value="">-- Select a report --</option>';
+        reports.forEach(report => {
+          const option = document.createElement('option');
+          option.value = `/reports/${report}`;
+          option.textContent = report;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Failed to load reports:', err);
+      }
+    }
+
+    function openSelectedReport(url) {
+      if (url) window.open(url, '_blank');
+    }
+
+    async function loadRunSummary() {
+      try {
+        const res = await fetch('/get-run-history');
+        const runs = await res.json();
+
+        const dateFilter = document.getElementById('dateFilter');
+        const tableBody = document.querySelector('#summaryTable tbody');
+       
+        const dates = new Set();
+
+        tableBody.innerHTML = '';
+        runs.forEach(run => {
+          const dateOnly = new Date(run.timestamp).toISOString().split('T')[0];
+          dates.add(dateOnly);
+
+          const row = document.createElement('tr');
+          row.setAttribute('data-date', dateOnly);
+         
+          row.innerHTML = `
+            <td>${dateOnly}</td>
+            <td>${run.passed}</td>
+            <td>${run.failed}</td>
+            <td>${run.total}</td>
+            <td><a href="${run.reportUrl}" target="_blank">View</a></td>
+          `;
+          tableBody.appendChild(row);
+        });
+        if(runs.length === 0){
+          const row = document.createElement('tr');
+          row.innerHTML = `<td colspan="5">No test runs available</td>`;
+          tableBody.appendChild(row);
+        }
+
+        // Update filter dropdown
+        dateFilter.innerHTML = '<option value="">All Dates</option>';
+        [...dates].sort().forEach(date => {
+          const option = document.createElement('option');
+          option.value = date;
+          option.textContent = date;
+          dateFilter.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Failed to load run summary:', err);
+      }
+    }
+
+    function filterByDate() {
+      const selectedDate = document.getElementById('dateFilter').value;
+      const rows = document.querySelectorAll('#summaryTable tbody tr');
+
+      rows.forEach(row => {
+        const rowDate = row.getAttribute('data-date');
+        // Show all rows if no date is selected, otherwise filter by selected date
+        if (!selectedDate || rowDate === selectedDate) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Load on startup
+    loadReportDropdown();
+    loadRunSummary();
+  </script>
+</body>
+</html>
+<!-- This is a simple HTML dashboard for the SKsoft API testing tool. It allows users to run tests, view reports, and filter run summaries by date. -->
+<!-- The dashboard uses JavaScript to handle API calls and dynamically update the UI based on user interactions. -->
