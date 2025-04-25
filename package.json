@@ -2,7 +2,7 @@
   "name": "postman-newman-dashboard",
   "version": "1.0.0",
   "description": "A dashboard for running and managing Postman Newman API tests.",
-  "main": "index.js",
+  "main": "server.mjs",
   "scripts": {
     "start": "node server.mjs",
     "run-newman": "node run-newman.js"
