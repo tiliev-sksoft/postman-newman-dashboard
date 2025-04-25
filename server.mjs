@@ -10,7 +10,7 @@ import { ensureDirectoryExists, readJsonFile, writeJsonFile, generateTimestamped
 dotenv.config();
 
 const app = express();
-const PORT = 3000; // Port for the server
+const PORT = process.env.PORT || 3000; // Port for the server
 const reportsDir = path.join(process.cwd(), 'reports'); // Directory to store reports
 const historyFile = path.join(process.cwd(), 'run-history.json'); // File to store test run history
 
