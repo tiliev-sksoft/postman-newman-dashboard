@@ -75,7 +75,7 @@ async function fetchFromPostmanAPI(uid, type) {
 
                     const reportUrl = `/reports/${reportName}`; // URL to access the report
                     console.log(`✅ Report generated: ${reportUrl}`);
-                    await open(`https://newman-dashboard-app-cvdsaxcfd3d9gsga.eastus-01.azurewebsites.net/${reportUrl}`); // Open the report in the browser
+                    await open(`https://newman-dashboard-app-cvdsaxcfd3d9gsga.eastus-01.azurewebsites.net${reportUrl}`); // Open the report in the browser
 
                     const summary = run?.summary?.run?.stats?.tests; // Extract test summary
 
