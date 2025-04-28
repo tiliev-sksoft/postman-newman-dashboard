@@ -76,27 +76,27 @@ async function fetchFromPostmanAPI(uid, type) {
                     const reportUrl = `/reports/${reportName}`; // URL to access the report
                     console.log(`✅ Report generated: ${reportUrl}`);
 
-                    const summary = run?.summary?.run?.stats?.tests; // Extract test summary
+                    // const summary = run?.summary?.run?.stats?.tests; // Extract test summary
 
-                    if (!summary) {
-                        console.error('❌ Summary data missing from Newman run.');
-                        return res.status(500).send({ error: 'Test summary not available' });
-                    }
+                    // if (!summary) {
+                    //     console.error('❌ Summary data missing from Newman run.');
+                    //     return res.status(500).send({ error: 'Test summary not available' });
+                    // }
 
-                    // Metadata for the test run
-                    const runMeta = {
-                        timestamp: new Date().toISOString(),
-                        reportName,
-                        reportUrl,
-                        passed: summary.total - summary.failed,
-                        failed: summary.failed,
-                        total: summary.total,
-                    };
+                    // // Metadata for the test run
+                    // const runMeta = {
+                    //     timestamp: new Date().toISOString(),
+                    //     reportName,
+                    //     reportUrl,
+                    //     passed: summary.total - summary.failed,
+                    //     failed: summary.failed,
+                    //     total: summary.total,
+                    // };
 
-                    // Update run history
-                    const history = readJsonFile(historyFile, []); // Read existing history
-                    history.unshift(runMeta); // Add the new run to the beginning of the history
-                    writeJsonFile(historyFile, history); // Save the updated history
+                    // // Update run history
+                    // const history = readJsonFile(historyFile, []); // Read existing history
+                    // history.unshift(runMeta); // Add the new run to the beginning of the history
+                    // writeJsonFile(historyFile, history); // Save the updated history
 
                     // Send response to the client
                     res.status(200).send({
