@@ -105,6 +105,10 @@
         const data = await res.json();
         if (data.reportUrl) {
           statusBox.innerHTML = `✅ Test complete! <a href="${data.reportUrl}" target="_blank">📊 View Full Report</a>`;
+
+          const fullUrl = `https://newman-dashboard-app-cvdsaxcfd3d9gsga.eastus-01.azurewebsites.net${data.reportUrl}`;
+          window.open(fullUrl, '_blank');
+
           loadReportDropdown();
           loadRunSummary();
         } else {
@@ -137,7 +141,10 @@
     }
 
     function openSelectedReport(url) {
-      if (url) window.open(url, '_blank');
+      if (url) {
+        const fullUrl = `https://newman-dashboard-app-cvdsaxcfd3d9gsga.eastus-01.azurewebsites.net${url}`;
+        window.open(fullUrl, '_blank');
+      }
     }
 
     async function loadRunSummary() {
@@ -192,7 +199,6 @@
 
       rows.forEach(row => {
         const rowDate = row.getAttribute('data-date');
-        // Show all rows if no date is selected, otherwise filter by selected date
         if (!selectedDate || rowDate === selectedDate) {
           row.style.display = '';
         } else {
@@ -207,5 +213,3 @@
   </script>
 </body>
 </html>
-<!-- This is a simple HTML dashboard for the SKsoft API testing tool. It allows users to run tests, view reports, and filter run summaries by date. -->
-<!-- The dashboard uses JavaScript to handle API calls and dynamically update the UI based on user interactions. -->
